@@ -42,7 +42,7 @@ const movieDetails = []
 // });
 
 movieUrls.forEach(async movieUrl => {
-   await axios.get(movieUrl.address)
+    await axios.get(movieUrl.address)
         .then(response => {
             const html = response.data;
             const $ = cheerio.load(html);
@@ -55,16 +55,40 @@ movieUrls.forEach(async movieUrl => {
 
             title = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h1').first().text();
             rYear = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').first().text();
-            movieType= $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').eq(1).text();
-            IMDBRate= $('span[itemprop="ratingValue"]', html).text();
+            movieType = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').eq(1).text();
+            IMDBRate = $('span[itemprop="ratingValue"]', html).text();
             // var imageAttr= $('img[class="hero__card-img image"]', html).attr();
             // imageUrl= (imageAttr === undefined) ? null : imageAttr.src;
-            imageUrl= $('div[class="image-container"]', html).find('img').attr('alt');
+            // imageUrl= $('div[class="image-container"]', html).find('img').attr('alt');
+
+
+            $('p[class="hidden-md hidden-lg torrent-qualities"]', html).find('a[class="download-torrent popup123"]')
+            .each(function () {
+                if ($(this).find('img').attr('alt')!=="magnet") {
+                   const torrent = $(this).attr('title');
+                   const url = $(this).attr('href');
+                   const tag = $(this).text();
+                //    console.log(torrent);
+                //    console.log(url);
+                //    console.log(tag);
+
+                   torrentUrls.push({
+                       tag:tag,
+                       torrent:torrent,
+                       url:url
+                   });
+                }
+              
+            });
+
             console.log(rYear);
             console.log(title);
             console.log(movieType);
             console.log(IMDBRate);
             console.log(imageUrl);
+            torrentUrls.forEach(torrentUrl => {
+                console.log(torrentUrl)
+            });
 
 
         }).catch(err => console.log("error"))
