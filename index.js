@@ -14,85 +14,83 @@ const websites = [
     },
 ]
 const movies = []
-const movieUrls = [
-    {
-        name: 'yts',
-        address: 'https://yts.rs/movie/the-velvet-underground-2021',
-        base: 'https://yts.rs',
-    }
-]
+// const movieUrls = [
+//     {
+//         name: 'yts',
+//         address: 'https://yts.rs/movie/the-velvet-underground-2021',
+//         base: 'https://yts.rs',
+//     }
+// ]
 const movieDetails = []
 
-// websites.forEach(website => {
-//     axios.get(website.address)
-//         .then(response => {
-//             const html = response.data;
-//             const $ = cheerio.load(html)
-//             $('.text--bold.palewhite.title', html).each(function () {
-//                 const title = $(this).text()
-//                 const url = $(this).attr('href')
-//                 movies.push({
-//                     title,
-//                     url: website.base + url,
-//                     source: website.name
-//                 })
-//                 // console.log(title);
-//             })
-//         }).catch(err => console.log(err))
-// });
-
-movieUrls.forEach(async movieUrl => {
-    await axios.get(movieUrl.address)
+websites.forEach(website => {
+    axios.get(website.address)
         .then(response => {
             const html = response.data;
-            const $ = cheerio.load(html);
-            var title;
-            var rYear;
-            var movieType;
-            var imageUrl;
-            var IMDBRate;
-            var torrentUrls = [];
+            const $ = cheerio.load(html)
+            $('.text--bold.palewhite.title', html).each(function () {
+                const title = $(this).text()
+                const url = $(this).attr('href')
+                movies.push({
+                    title,
+                    address: website.base + url,
+                    source: website.name
+                })
+                // console.log(title);
+            })
+        })
+        .catch(err => console.log(err))
+});
 
-            title = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h1').first().text();
-            rYear = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').first().text();
-            movieType = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').eq(1).text();
-            IMDBRate = $('span[itemprop="ratingValue"]', html).text();
-            // var imageAttr= $('img[class="hero__card-img image"]', html).attr();
-            // imageUrl= (imageAttr === undefined) ? null : imageAttr.src;
-            // imageUrl= $('div[class="image-container"]', html).find('img').attr('alt');
+async function getMovieDetails() {
+    console.log('fun loaded');
+    movies.forEach(async movieUrl => {
+        await axios.get(movieUrl.address)
+            .then(response => {
+                const html = response.data;
+                const $ = cheerio.load(html);
+                var title;
+                var releaseYear;
+                var movieType;
+                var imageUrl;
+                var IMDBRate;
+                var torrentUrls = [];
 
-
-            $('p[class="hidden-md hidden-lg torrent-qualities"]', html).find('a[class="download-torrent popup123"]')
-            .each(function () {
-                if ($(this).find('img').attr('alt')!=="magnet") {
-                   const torrent = $(this).attr('title');
-                   const url = $(this).attr('href');
-                   const tag = $(this).text();
-                //    console.log(torrent);
-                //    console.log(url);
-                //    console.log(tag);
-
-                   torrentUrls.push({
-                       tag:tag,
-                       torrent:torrent,
-                       url:url
-                   });
-                }
-              
-            });
-
-            console.log(rYear);
-            console.log(title);
-            console.log(movieType);
-            console.log(IMDBRate);
-            console.log(imageUrl);
-            torrentUrls.forEach(torrentUrl => {
-                console.log(torrentUrl)
-            });
+                title = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h1').first().text();
+                releaseYear = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').first().text();
+                movieType = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').eq(1).text();
+                IMDBRate = $('span[itemprop="ratingValue"]', html).text();
+                // var imageAttr= $('img[class="hero__card-img image"]', html).attr();
+                // imageUrl= (imageAttr === undefined) ? null : imageAttr.src;
+                // imageUrl= $('div[class="image-container"]', html).find('img').attr('alt');
 
 
-        }).catch(err => console.log("error"))
-})
+                $('p[class="hidden-md hidden-lg torrent-qualities"]', html).find('a[class="download-torrent popup123"]')
+                    .each(function () {
+                        if ($(this).find('img').attr('alt') !== "magnet") {
+                            const torrent = $(this).attr('title');
+                            const url = $(this).attr('href');
+                            const tag = $(this).text();
+                            torrentUrls.push({
+                                tag: tag,
+                                torrent: torrent,
+                                url: url
+                            });
+                        }
+                    });
+                movieDetails.push({
+                    title: title,
+                    release_year: releaseYear,
+                    type: movieType,
+                    IMDB: IMDBRate,
+                    torrents: torrentUrls
+                });
+
+                // console.log(movieDetails)
+
+            }).catch(err => console.log("error"))
+    })
+}
 
 
 
@@ -109,6 +107,10 @@ app.get('/', (req, res) => {
 
 app.get('/movies', (req, res) => {
     res.json(movies)
+})
+app.get('/moviedetails', (req, res) => {
+    getMovieDetails()
+    res.json(movieDetails)
 })
 
 // app.get('/news/:websiteId', (req, res) => {
