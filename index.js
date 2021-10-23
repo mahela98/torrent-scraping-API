@@ -14,13 +14,6 @@ const websites = [
     },
 ]
 const movies = []
-// const movieUrls = [
-//     {
-//         name: 'yts',
-//         address: 'https://yts.rs/movie/the-velvet-underground-2021',
-//         base: 'https://yts.rs',
-//     }
-// ]
 const movieDetails = []
 
 websites.forEach(website => {
@@ -36,8 +29,8 @@ websites.forEach(website => {
                     address: website.base + url,
                     source: website.name
                 })
-                // console.log(title);
             })
+            getMovieDetails();
         })
         .catch(err => console.log(err))
 });
@@ -54,17 +47,14 @@ async function getMovieDetails() {
                 var movieType;
                 var imageUrl;
                 var IMDBRate;
+                var synopsis;
                 var torrentUrls = [];
 
                 title = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h1').first().text();
                 releaseYear = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').first().text();
                 movieType = $('div[class="visible-xs col-xs-20 movie-info text--white"]', html).find('h2').eq(1).text();
                 IMDBRate = $('span[itemprop="ratingValue"]', html).text();
-                // var imageAttr= $('img[class="hero__card-img image"]', html).attr();
-                // imageUrl= (imageAttr === undefined) ? null : imageAttr.src;
-                // imageUrl= $('div[class="image-container"]', html).find('img').attr('alt');
-
-
+                synopsis = $('div[class="synopsis col-sm-10 col-md-13 col-lg-12"]', html).find('p').first().text();
                 $('p[class="hidden-md hidden-lg torrent-qualities"]', html).find('a[class="download-torrent popup123"]')
                     .each(function () {
                         if ($(this).find('img').attr('alt') !== "magnet") {
@@ -83,25 +73,16 @@ async function getMovieDetails() {
                     release_year: releaseYear,
                     type: movieType,
                     IMDB: IMDBRate,
+                    synopsis: synopsis,
                     torrents: torrentUrls
                 });
-
                 // console.log(movieDetails)
-
             }).catch(err => console.log("error"))
     })
 }
 
 
-
-
-
-
-
-
-
 app.get('/', (req, res) => {
-
     res.json('Welcome to my Climate Change News API')
 })
 
@@ -109,9 +90,28 @@ app.get('/movies', (req, res) => {
     res.json(movies)
 })
 app.get('/moviedetails', (req, res) => {
-    getMovieDetails()
     res.json(movieDetails)
 })
+
+//Catches requests made to localhost:3000/search
+app.get('/search', (request, response) => {
+
+    //Holds value of the query param 'searchquery'.
+    const searchQuery = request.query.searchquery;
+
+    //Do something when the searchQuery is not null.
+    if (searchQuery != null) {
+
+        searchGoogle(searchQuery)
+            .then(results => {
+                //Returns a 200 Status OK with Results JSON back to the client.
+                response.status(200);
+                response.json(results);
+            });
+    } else {
+        response.end();
+    }
+});
 
 // app.get('/news/:websiteId', (req, res) => {
 //     const websiteId = req.params.websiteId
