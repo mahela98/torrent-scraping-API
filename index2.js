@@ -1,14 +1,17 @@
 const express = require('express');
+const torrentSearch = require('./torrentSearch');
 const app = express();
 const port = 3000;
 
 
-app.get('/search', (request, response) => {
+app.get('/search',async (request, response) => {
     const searchQuery = request.query.searchquery;
     if (searchQuery != null) {
-        searchGoogle(searchQuery)
+    //    var results=await torrentSearch(searchQuery)
+    //    console.log(results);
+       
+       torrentSearch(searchQuery)
             .then(results => {
-                //Returns a 200 Status OK with Results JSON back to the client.
                 response.status(200);
                 response.json(results);
             });
