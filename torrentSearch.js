@@ -4,10 +4,12 @@ const torrentSearch = async (searchQuery) => {
     const browser = await puppeteer.launch();
 
     const page = await browser.newPage();
-    await page.goto('https://google.com');
-    await page.type('input[name="q"]', searchQuery);
+    await page.goto(`https://yts.rs/browse-movies/${searchQuery}/all/all/0/latest`);
+    // await page.type('input[name="search"]', searchQuery);
+    // await page.keyboard.press('Enter');
 
-    await page.screenshot({path: 'example.png'});
+    await page.waitForSelector("div[class=__header]");
+    await page.screenshot({ path: 'example.png' });
 
     await browser.close();
 };
