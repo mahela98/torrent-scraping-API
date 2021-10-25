@@ -13,6 +13,8 @@ replace movie_url with a url.
 
 ### Example
 - http://localhost:3000/?search=bat
-
-
 - http://localhost:3000/movie?url=https://yts.rs/movie/vampire-bats-2005
+
+### To run
+- npm install
+- npm run dev
