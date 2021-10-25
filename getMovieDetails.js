@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 
-const torrentSearch = async (url) => {
+const getMovieDetails = async (url) => {
     const torrents = [];
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -45,6 +45,6 @@ const torrentSearch = async (url) => {
     return movie;
 };
 
-module.exports = torrentSearch;
+module.exports = getMovieDetails;
 
-// torrentSearch('https://yts.rs/movie/venom-2018');
+// getMovieDetails('https://yts.rs/movie/venom-2018');

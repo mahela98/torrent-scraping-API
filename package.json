@@ -1,18 +1,16 @@
 {
   "name": "get-movie-data-from-websites",
   "version": "1.0.0",
-  "description": "using node and expressjs",
-  "main": "index2.js",
+  "description": "using node, expressjs and puppeteer",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index2.js",
-    "dev": "nodemon index2.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "author": "E.A.C.Mahela Siriwardana",
-  "license": "ISC",
+  "author": "E.A.C.M.S",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^0.23.0",
-    "cheerio": "^1.0.0-rc.10",
     "express": "^4.17.1",
     "nodemon": "^2.0.14",
     "puppeteer": "^10.4.0"
