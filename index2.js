@@ -4,8 +4,8 @@ const app = express();
 const port = 3000;
 
 
-app.get('/search',async (request, response) => {
-    const searchQuery = request.query.searchquery;
+app.get('/',async (request, response) => {
+    const searchQuery = request.query.search;
     if (searchQuery != null) {
     //    var results=await torrentSearch(searchQuery)
     //    console.log(results);
@@ -20,8 +20,23 @@ app.get('/search',async (request, response) => {
     }
 });
 
+app.get('/',async (request, response) => {
+    const url = request.query.url;
+    if (url != null) {
+       torrentSearch(url)
+            .then(results => {
+                response.status(200);
+                response.json(results);
+            });
+    } else {
+        response.end();
+    }
+});
+
+
+
 //Catches requests made to localhost:3000/
-app.get('/', (req, res) => res.send('Hello World!'));
+// app.get('/', (req, res) => res.send('Hello World!'));
 
 
 //Initialises the express server on the port 30000
